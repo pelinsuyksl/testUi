@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "Adding Device";
+}
+
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 50px; text-align: center;">
+    <div class="card-container">
+        <h2 style="text-align: center; margin-bottom: 20px;">Add Device</h2>
+        <div class="form-group">
+            <label>User Id:</label>
+            <input type="number" id="addUserId" class="form-control" min="0"  />
+        </div>
+        <div class="form-group">
+            <label>Device Name:</label>
+            <input type="text" id="addDeviceName" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>Device Model:</label>
+            <input type="text" id="addDeviceModel" class="form-control" />
+        </div>
+       
+
+        <button onclick="addDevice()" class="btn" style="background-color: #eb6161;">Add</button>
+        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary" style="background-color: #d44545; border:none;">Home</a>
+
+        <div id="result" class="result-msg"></div>
+    </div>
+
+</div>
+<script>
+    window.addDevice = async function () {
+        const user_add = document.getElementById('addUserId');
+        const name_add = document.getElementById('addDeviceName');
+        const model_add = document.getElementById('addDeviceModel');
+        const resultDiv = document.getElementById('result');
+
+        const rawId = parseInt(user_add ? user_add.value : '');
+        const deviceName = name_add ? name_add.value.trim() : '';
+        const deviceModel = model_add ? model_add.value.trim() : '';
+
+        if (isNaN(rawId) || rawId <= 0) {
+            if (resultDiv) {
+                resultDiv.style.color = 'red';
+                resultDiv.innerHTML = 'Enter a valid user id!';
+            }
+            return;
+        }
+
+        if (!deviceName) {
+            if (resultDiv) {
+                resultDiv.style.color = 'red';
+                resultDiv.innerHTML = 'Device name is required!';
+            }
+            return;
+        }
+
+        const dto = {
+            UserId: rawId,
+            DeviceName: deviceName,
+            DeviceModel: deviceModel
+        };
+
+        const response = await sendApiRequest('device/add', dto);
+
+        if (resultDiv && response) {
+            if (response.Status || response.status) {
+                resultDiv.style.color = 'green';
+                resultDiv.innerHTML = response.Message || response.message || 'Device has been added successfully.';
+            } else {
+                resultDiv.style.color = 'red';
+                resultDiv.innerHTML = response.Message || response.message || 'Device can not be addeds!';
+            }
+        }
+    };
+</script>

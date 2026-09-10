@@ -1,0 +1,66 @@
+﻿@{
+    ViewBag.Title = "Remind Id";
+}
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 50px; text-align: center;">
+    <div class="card-container">
+        <h2 style="text-align: center; margin-bottom: 20px;">Remind Id</h2>
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" id="remindEmail" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" id="remindPassword" class="form-control" />
+        </div>
+
+        <button onclick="remindId()" class="btn" style="background-color: #eb6161;">Show Id</button>
+        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary" style="background-color: #d44545; border:none;">Home</a>
+
+        <div id="result" class="result-msg"></div>
+    </div>
+
+</div>
+<script>
+    window.remindId = async function () {
+        const email_remind = document.getElementById('remindEmail');
+        const pass_remind = document.getElementById('remindPassword');
+        const resultDiv = document.getElementById('result');
+
+        const email = email_remind ? email_remind.value.trim() : '';
+        const password = pass_remind ? pass_remind.value : '';
+
+        if (!email || !password) {
+            if (resultDiv) {
+                resultDiv.style.color = 'red';
+                resultDiv.innerHTML = 'All areas are required!';
+            }
+            return;
+        }
+
+        if (!email.includes('@@')) {
+            if (resultDiv) {
+                resultDiv.style.color = 'red';
+                resultDiv.innerHTML = 'A valid e-mail is required!';
+            }
+            return;
+        }
+
+        const dto = {
+            Email: email,
+            Password: password
+        };
+
+        const response = await sendApiRequest('user/remindid', dto);
+
+        if (resultDiv && response) {
+            if (response.Status || response.status) {
+                resultDiv.style.color = 'green';
+                const userId = response.UserId || response.userId || response.Data || response.data;
+                resultDiv.innerHTML = `User ID: ${userId}`;
+            } else {
+                resultDiv.style.color = 'red';
+                resultDiv.innerHTML = response.Message || response.message || 'User Id cannot be found!!';
+            }
+        }
+    };
+</script>

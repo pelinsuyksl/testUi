@@ -1,0 +1,78 @@
+﻿@{
+    ViewBag.Title = "Registration Page";
+}
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 50px; text-align: center;">
+    <div class="card-container">
+        <h2 style="text-align: center; margin-bottom: 20px;">Register</h2>
+        <div class="form-group">
+            <label>Full Name:</label>
+            <input type="text" id="regFullName" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" id="regEmail" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" id="regPassword" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label>Phone Number:</label>
+            <input type="text" id="regPhone" class="form-control" />
+        </div>
+
+        <button onclick="registerUser()" class="btn" style="background-color: #eb6161;">Register</button>
+        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary" style="background-color: #d44545; border:none;">Home</a>
+
+        <div id="result" class="result-msg"></div>
+    </div>
+
+</div>
+<script>
+    window.registerUser = async function () {
+        const name_reg = document.getElementById('regFullName');
+        const email_reg = document.getElementById('regEmail');
+        const pass_reg = document.getElementById('regPassword');
+        const phone_reg = document.getElementById('regPhone');
+        const resultDiv = document.getElementById('result');
+
+        const fullName = name_reg ? name_reg.value.trim() : '';
+        const email = email_reg ? email_reg.value.trim() : '';
+        const password = pass_reg ? pass_reg.value : '';
+        const phone = phone_reg ? phone_reg.value.trim() : '';
+
+        if (!fullName || !email || !password || !phone) {
+            if (resultDiv) {
+                resultDiv.style.color = 'red';
+                resultDiv.innerHTML = 'All areas are required!!';
+            }
+            return;
+        }
+
+        if (!email.includes('@@')) {
+            if (resultDiv) {
+                resultDiv.style.color = 'red';
+                resultDiv.innerHTML = 'Enter a valid e-mail!';
+            }
+            return;
+        }
+
+        const dto = {
+            FullName: fullName,
+            Email: email,
+            Password: password,
+            Phone: phone
+        };
+        const response = await sendApiRequest('user/register', dto);
+
+        if (resultDiv && response) {
+            if (response.Status || response.status) {
+                resultDiv.style.color = 'green';
+                resultDiv.innerHTML = response.Message || response.message || 'User has been created succesfully.';
+            } else {
+                resultDiv.style.color = 'red';
+                resultDiv.innerHTML = response.Message || response.message || 'User can not be created!';
+            }
+        }
+    };
+</script>

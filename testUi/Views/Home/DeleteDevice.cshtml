@@ -1,0 +1,65 @@
+﻿@{
+    ViewBag.Title = "Deleting Device";
+}
+
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 50px; text-align: center;">
+    <div class="card-container">
+        <h2 style="text-align: center; margin-bottom: 20px;">Delete Device</h2>
+        <div class="form-group">
+            <label>User Id:</label>
+            <input type="number" id="deleteUserId" class="form-control" min="0" />
+        </div>
+        <div class="form-group">
+            <label>Device Number:</label>
+            <input type="number" id="deleteDeviceNumber" class="form-control" min="0" />
+        </div>
+
+        <button onclick="deleteDevice()" class="btn" style="background-color: #eb6161;">Delete</button>
+        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary" style="background-color: #d44545; border:none;">Home</a>
+
+        <div id="result" class="result-msg"></div>
+    </div>
+
+</div>
+<script>
+    window.deleteDevice = async function () {
+        const user_del = document.getElementById('deleteUserId');
+        const device_del = document.getElementById('deleteDeviceNumber');
+        const resultDiv = document.getElementById('result');
+
+        const rawUserId = parseInt(user_del ? user_del.value : '');
+        const rawDeviceNumber = parseInt(device_del ? device_del.value : '');
+
+        if (isNaN(rawUserId) || rawUserId <= 0) {
+            if (resultDiv) {
+                resultDiv.style.color = 'red';
+                resultDiv.innerHTML = 'User Id 0 veya daha küçük olamaz!';
+            }
+            return;
+        }
+
+        if (isNaN(rawDeviceNumber) || rawDeviceNumber <= 0) {
+            if (resultDiv) {
+                resultDiv.style.color = 'red';
+                resultDiv.innerHTML = 'Device Number 0 veya daha küçük olamaz!';
+            }
+            return;
+        }
+
+        const dto = {
+            UserId: rawUserId,
+            DevNum: rawDeviceNumber
+        };
+        const response = await sendApiRequest('device/delete', dto);
+
+        if (resultDiv && response) {
+            if (response.Status || response.status) {
+                resultDiv.style.color = 'green';
+                resultDiv.innerHTML = response.Message || response.message || 'Device deleted successfully.';
+            } else {
+                resultDiv.style.color = 'red';
+                resultDiv.innerHTML = response.Message || response.message || 'Device can not be deleted!';
+            }
+        }
+    };
+</script>

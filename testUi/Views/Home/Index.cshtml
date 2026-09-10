@@ -1,0 +1,38 @@
+﻿@{
+    ViewBag.Title = "First Application Try";
+}
+
+<main>
+    
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 50px; text-align: center;">
+        <h2>Please choose the action to be done below;</h2>
+        <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px; width: 100%; max-width: 250px; ">
+            <a href="@Url.Action("Register", "Home")" class="btn">Register</a>
+            <a href="@Url.Action("RemindId","Home")" class="btn">Id Reminder</a>
+            <a href="@Url.Action("ChangePassword", "Home")" class="btn">Change Password</a>
+            <a href="@Url.Action("AddDevice", "Home")" class="btn">Add Device</a>
+            <a href="@Url.Action("DeleteDevice", "Home")" class="btn">Delete Device</a>
+            <a href="@Url.Action("ListDevices", "Home")" class="btn">List Devices</a>
+        </div>
+    </div>
+
+        <style>
+            body {
+                background-color: #DDDDFF;
+                margin: 0;
+                padding: 0;
+            }  
+            .btn {
+                padding: 15px 25px;
+                background-color: #000055;
+                color: white;
+                text-decoration: none;
+                border-radius: 5px;
+                font-weight: bold;
+            }
+
+                .btn:hover {
+                    background-color: #0056b3;
+                }
+        </style>
+</main>

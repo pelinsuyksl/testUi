@@ -1,0 +1,74 @@
+﻿@{
+    ViewBag.Title = "List Devices";
+}
+
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-top: 50px; text-align: center;">
+    <div class="card-container">
+        <h2 style="text-align: center; margin-bottom: 20px;">List Devices</h2>
+        <div class="form-group">
+            <label>User Id:</label>
+            <input type="number" id="listUserId" class="form-control" min="1" placeholder="e.g. 1" />
+        </div>
+
+        <button onclick="listDevices()" class="btn" style="background-color: #eb6161; border: none;">Get Devices</button>
+        <a href="@Url.Action("Index", "Home")" class="btn btn-secondary" style="background-color: #d44545; border:none;">Home</a>
+
+        <div id="result" class="result-msg" style="margin-top: 20px;"></div>
+    </div>
+</div>
+
+<script>
+    window.listDevices = async function () {
+        const user_listd = document.getElementById('listUserId');
+        const resultDiv = document.getElementById('result');
+
+        const rawUserId = parseInt(user_listd ? user_listd.value : '');
+
+        if (isNaN(rawUserId) || rawUserId <= 0) {
+            if (resultDiv) {
+                resultDiv.style.color = 'red';
+                resultDiv.innerHTML = 'User Id must be greater than 0!';
+            }
+            return;
+        }
+
+        const dto = {
+            UserId: rawUserId
+        };
+
+        const response = await sendApiRequest('device/list', dto);
+
+        if (!resultDiv || !response) return;
+        const list = response.userDevices || response.Data || response.data || (Array.isArray(response) ? response : []);
+
+        if (Array.isArray(list) && list.length > 0) {
+            let html = `
+                <table class="table" style="width:100%; margin-top:15px; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #ccc;">
+                            <th>DevNum</th>
+                            <th>Device Name</th>
+                            <th>Device Model</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+            list.forEach(item => {
+                html += `
+                    <tr style="border-bottom: 1px solid #eee;">
+                        <td>${item.DevNum || item.devNum}</td>
+                        <td>${item.DeviceName || item.deviceName}</td>
+                        <td>${item.DeviceModel || item.deviceModel || '-'}</td>
+                    </tr>`;
+            });
+
+            html += `</tbody></table>`;
+            resultDiv.style.color = 'black';
+            resultDiv.innerHTML = html;
+        } else {
+            resultDiv.style.color = 'orange';
+            resultDiv.innerHTML = (typeof response === 'object' && (response.Message || response.message))
+                || 'No devices found for this user.';
+        }
+    };
+</script>
